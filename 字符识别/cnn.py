@@ -136,4 +136,4 @@ if __name__ == '__main__':
     cnn.build_model()
     cnn.train()
     cnn.evaluate()
-    cnn.save_model()
+    # cnn.save_model()
