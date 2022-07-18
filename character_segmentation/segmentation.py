@@ -2,6 +2,10 @@ import cv2 as cv
 import numpy as np
 import os
 
+IMAGE_HEIGHT = 105
+IMAGE_WIDTH = 400
+IMAGE_PATH = "./image"
+SAVE_PATH = "./result/"
 
 class Segmentation():
     def __init__(self):
@@ -10,8 +14,6 @@ class Segmentation():
     # 加载图像数据集和标签，其中标签是通过拆解中科大车牌数据集的图像名称得到的
     def load(self, path, width, height):
         input_data = []
-        label_ini = []
-        label_list = []
         # 导入指定路径下的所有图像数据
         for item in os.listdir(path):
             imgpath = os.path.join(path, item)
@@ -21,18 +23,8 @@ class Segmentation():
                 input_image = cv.resize(input_image_ini, (width, height))
                 input_data.append(input_image)
 
-                temp1 = item.split('.')
-                temp2 = temp1[0].split('-')
-                temp3 = temp2[4].split('_')
-                for char in temp3:
-                    label_ini.append(char)
-                label_list.append(label_ini)
-                label_ini = []
-
-        label = np.array(label_list, dtype=str)
-
         # 返回读取的图像数据集dataset和得到的对应图像的标签集label
-        return input_data, label
+        return input_data
 
     # 数据探查，可以显示刚才导入的图像数据集
     def image_data_show(self, input_image):
@@ -141,7 +133,7 @@ class Segmentation():
     # 二值化图像显示函数，用于图像二值化后的数据探查
     def binary_show(self, input_data):
         for i in range((len(input_data))):
-            reshape_img = self.normal_shape(input_data[i], 400, 105)
+            reshape_img = self.normal_shape(input_data[i], IMAGE_WIDTH, IMAGE_HEIGHT)
             b_temp_img, off_temp_img = self.Binarization(reshape_img)
             self.Blur(b_temp_img)
             b_img = self.remove_border(b_temp_img)
@@ -153,7 +145,7 @@ class Segmentation():
     # 字符分割函数，调用前面声明的几个方法，进行字符分割
     def character_segmentation(self, input_data):
         output_img = []
-        print("开始进行字符分割...")
+
         for i in range(len(input_data)):
             # 依次调用几个方法，对车牌图像进行字符分割
             reshape_img = self.normal_shape(input_data[i], 308, 83)
@@ -163,66 +155,50 @@ class Segmentation():
             off_img = self.remove_border(off_temp_img)
             output_img.append(self.char_split(b_img, off_img))
         # output_img = np.array(output_img, dtype=np.uint8)
-        print("字符分割完成！")
-        print("\n")
+
 
         return output_img
 
     # 字符分割结果展示，显示分割得到的所有单个字符图像
     def result_show(self, candidate_chars):
-        print("输出字符分割结果...")
-        print("\n")
+
         for i in range(len(candidate_chars)):
             for char in candidate_chars[i]:
-                image = cv.resize(char, (50,50))
-                cv.imshow("result_show", image)
-                cv.waitKey()
-        cv.destroyAllWindows()
+                image = cv.resize(char, (50, 50))
 
     # 将所有得到的单个字符图像保存到result文件夹下，并在文件名中记录其标签值
-    def image_save(self, input_data, label):
-        print("开始保存结果图像...")
+    def image_save(self, input_data):
+
         tosaves = np.array(input_data)
-        count = np.arange(0, (tosaves.shape[0]+1)*tosaves.shape[1], 1)
+        count = np.arange(0, (tosaves.shape[0] + 1) * tosaves.shape[1], 1)
         j = -1
         for i in range(len(input_data)):
             for tosave in tosaves[i]:
-                j = j+1
+                j = j + 1
                 # 将所有得到的单个字符图像统一调整为20*20大小
                 img = cv.resize(tosave, (20, 20))
                 # 将所有得到的图像全部保存在result目录下，统一保存为20*20大小的jpg格式文件
                 # 将所有得到的单个字符图像命名为：“00x_0y_label”的格式，其中的x为当前图像所对应的输入图像的编号，
                 # y为当前图像所显示字符在输入图像中的位置，label则对应了该图像的标签值
-                cv.imwrite('./result/00' + str(i) + '_0' + str(count[j]) + '_' + label[i][j] + '.jpg', img)
+                cv.imwrite(SAVE_PATH+str(count[j]) + '.jpg', img)
             j = -1
         print("保存完成！")
 
-        '''
-        label值使用了中科大车牌数据集的label标注方法，例如名称为025-95_113-154&383_386&473-386&473_177&454_154&383_363&402-0_0_22_27_27_33_16-37-15.jpg
-        的图像，其由分隔符’-‘分为了几个区域：
-        (1) 025为区域, (2) 95_113 对应两个拍摄角度角度, 水平95°, 竖直113°, (3) 154&383_386&473对应车牌边界框的坐标:左上(154, 383), 右下(386, 473),
-        (4) 386&473_177&454_154&383_363&402对应了车牌四个角的点坐标, (5) 0_0_22_27_27_33_16为车牌号码, 其映射关系如下: 第一个为省份0 对应省份字典皖, 后面的为字母和文字, 分别按照下列字典进行对应：
-        
-        省份标签：{ "皖": 0, "沪": 1, "津": 2, "渝": 3, "冀": 4, "晋": 5, "蒙": 6, "辽": 7, "吉": 8, "黑": 9,
-                  "苏": 10, "浙": 11, "京": 12, "闽": 13, "赣": 14, "鲁": 15, "豫": 16, "鄂": 17, "湘": 18,
-                  "粤": 19, "桂": 20, "琼": 21, "川": 22, "贵": 23, "云": 24, "西": 25, "陕": 26, "甘": 27,
-                  "青": 28, "宁": 29, "新": 30 }
-        字母和数字标签： { "a" : 0, "b" : 1, "c" : 2, "d" : 3, "e" : 4, "f" : 5, "g" : 6, "h" : 7, "j" : 8,
-                        "k" : 9, "l" : 10, "m" : 11, "n" : 12, "p" : 13, "q" : 14, "r" : 15, "s" : 16,
-                        "t" : 17, "u" : 18, "v" : 19, "w" : 20, "x":  21, "y" : 22, "z" : 23, "0" : 24,
-                        "1" : 25, "2" : 26, "3" : 27, "4" : 28, "5" : 29, "6" : 30, "7" : 31, "8" : 32,
-                        "9" : 33  }
-        '''
+    def segment(self):
+        output = []  # 字符分割结果
+        self.dataset = self.load(IMAGE_PATH, IMAGE_WIDTH, IMAGE_HEIGHT)  # 加载图像数据集和标签集
+        output = self.character_segmentation(self.dataset)  # 进行字符拆分，并将字符拆分后得到的结果存储在output中
+        self.image_save(output)  # 将单个字符图像连同对应标签值保存
+
 
 if __name__ == '__main__':
-    output = [] # 字符分割结果
+    # output = []  # 字符分割结果
+    # split = Segmentation()
+    # dataset = split.load(IMAGE_PATH, IMAGE_WIDTH, IMAGE_HEIGHT)  # 加载图像数据集和标签集
+    # split.image_data_show(dataset)  # 进行数据探查，显示加载的每张车牌图像
+    # split.binary_show(dataset)  # 显示二值化后的每张车牌图像
+    # output = split.character_segmentation(dataset)  # 进行字符拆分，并将字符拆分后得到的结果存储在output中
+    # split.result_show(output)  # 显示分割得到的单个字符图像
+    # split.image_save(output)  # 将单个字符图像连同对应标签值保存
     split = Segmentation()
-    IMAGE_PATH = "./image"
-    dataset, label = split.load(IMAGE_PATH, 400, 105) # 加载图像数据集和标签集
-    split.image_data_show(dataset) # 进行数据探查，显示加载的每张车牌图像
-    split.binary_show(dataset) # 显示二值化后的每张车牌图像
-    output = split.character_segmentation(dataset) # 进行字符拆分，并将字符拆分后得到的结果存储在output中
-    split.result_show(output) # 显示分割得到的单个字符图像
-    split.image_save(output, label) #将单个字符图像连同对应标签值保存
-
-
+    split.segment()

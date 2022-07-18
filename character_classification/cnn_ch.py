@@ -11,10 +11,10 @@ IMAGE_WIDTH = 24
 IMAGE_HEIGHT = 48
 CLASSIFICATION_COUNT = 31
 LABEL_DICT = {
-	'chuan':0, 'e':1, 'gan':2, 'gan1':3, 'gui':4, 'gui1':5, 'hei':6, 'hu':7, 'ji':8, 'jin':9,
-	'jing':10, 'jl':11, 'liao':12, 'lu':13, 'meng':14, 'min':15, 'ning':16, 'qing':17,	'qiong':18, 'shan':19,
-	'su':20, 'sx':21, 'wan':22, 'xiang':23, 'xin':24, 'yu':25, 'yu1':26, 'yue':27, 'yun':28, 'zang':29,
-	'zhe':30
+    'chuan': 0, 'e': 1, 'gan': 2, 'gan1': 3, 'gui': 4, 'gui1': 5, 'hei': 6, 'hu': 7, 'ji': 8, 'jin': 9,
+    'jing': 10, 'jl': 11, 'liao': 12, 'lu': 13, 'meng': 14, 'min': 15, 'ning': 16, 'qing': 17, 'qiong': 18, 'shan': 19,
+    'su': 20, 'sx': 21, 'wan': 22, 'xiang': 23, 'xin': 24, 'yu': 25, 'yu1': 26, 'yue': 27, 'yun': 28, 'zang': 29,
+    'zhe': 30
 }
 
 physical_devices = tf.config.list_physical_devices('GPU')
@@ -37,12 +37,42 @@ class Cnn(object):
         print('build model...')
         self.model = models.Sequential()
 
-        self.model.add(tf.keras.layers.Flatten(input_shape=(IMAGE_HEIGHT, IMAGE_WIDTH, 1)))
-        # reshape
+        # self.model.add(tf.keras.layers.Flatten(input_shape=(IMAGE_HEIGHT, IMAGE_WIDTH, 1)))
+        # # reshape
+        #
+        # self.model.add(layers.Dense(128, activation=tf.nn.relu))
+        # self.model.add(layers.Dense(128, activation=tf.nn.relu))
+        # self.model.add(layers.Dense(CLASSIFICATION_COUNT, activation=tf.nn.softmax))
+        self.model.add(layers.Conv2D(
+            32, (3, 3),
+            padding="valid",
+            strides=(1, 1),
+            data_format="channels_last",
+            input_shape=(IMAGE_HEIGHT, IMAGE_WIDTH, 1),
+            activation="relu"
+        ))
+        self.model.add(layers.MaxPooling2D(pool_size=(2, 2)))  # Pool layer, filter size is 2 * 2
+        self.model.add(layers.Dropout(0.2))  # Dropout layer
 
-        self.model.add(layers.Dense(128, activation=tf.nn.relu))
-        self.model.add(layers.Dense(128, activation=tf.nn.relu))
-        self.model.add(layers.Dense(CLASSIFICATION_COUNT, activation=tf.nn.softmax))
+        self.model.add(layers.Conv2D(
+            64, (3, 3), padding="valid",
+            strides=(1, 1),
+            data_format="channels_last",
+            input_shape=(64, 64, 1),
+            activation="relu"
+        ))
+        self.model.add(layers.MaxPooling2D(pool_size=(2, 2)))
+        self.model.add(layers.Dropout(0.2))
+
+        # The Flatten layer, between the convolutional layer and Dense,
+        # flattens the convolution output of the image into a one-dimensional vector.
+        self.model.add(layers.Flatten())
+        # Fully connected layer, classic neural network structure, 1024 neurons
+        self.model.add(layers.Dense(1024, activation="relu"))
+        self.model.add(layers.Dropout(0.4))
+        # Output layer, the number of neurons is the number of tag types,
+        # use sigmoid activation function, output the final result
+        self.model.add(layers.Dense(CLASSIFICATION_COUNT, activation="softmax"))
 
         self.model.summary()
 
@@ -71,8 +101,9 @@ class Cnn(object):
                     subitem_path = os.path.join(item_path, subitem)
                     gray_image = cv.imread(subitem_path, cv.IMREAD_GRAYSCALE)
                     resized_image = cv.resize(gray_image, (IMAGE_WIDTH, IMAGE_HEIGHT))
-                    data.append(resized_image.ravel())
+                    data.append(resized_image.ravel())  # 展平
                     labels.append(LABEL_DICT[item])
+
 
         return np.array(data), np.array(labels)
 
@@ -99,7 +130,7 @@ class Cnn(object):
         # print('train_lables.shape(%s)' % str(self.train_labels.shape))
         print('loading data...')
 
-    def train(self, epoch=40):
+    def train(self, epoch=30):
         print('training...')
         self.model.fit(self.train_images,
                        self.train_labels,

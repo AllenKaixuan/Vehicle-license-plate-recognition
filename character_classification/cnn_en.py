@@ -4,8 +4,8 @@ import numpy as np
 import tensorflow as tf
 from tensorflow.keras import models, layers
 
-TRAIN_DIR = "./enu_train"
-TEST_DIR = "./enu_test"
+TRAIN_DIR = "./train_en"
+TEST_DIR = "./enu_train"
 MODEL_PATH = "./model/model_en.h5"
 IMAGE_WIDTH = 20
 IMAGE_HEIGHT = 20
