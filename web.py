@@ -4,6 +4,7 @@ import json
 import cv2
 import os
 from flask import Flask, request, make_response
+import recognize
 
 sever = Flask(__name__)
 
