@@ -2,20 +2,15 @@ import numpy as np
 import cv2 as cv
 from plate_location import util
 
-SAVE_PATH = "../character_segmentation/image/"
 HSV_MIN_BLUE_H = 100  # HSV中蓝色分量最小范围值
 HSV_MAX_BLUE_H = 140  # HSV中蓝色分量最大范围值
 MAX_SV = 250
 MIN_SV = 95
 
-IMAGE_PATH = "../input/img_3.png"
 
-
-
-def locate():
-    plate_image = cv.imread(IMAGE_PATH)
+def locate(image):
     # 平滑
-    plate_image= cv.bilateralFilter(plate_image, 25, 100, 100)
+    plate_image = cv.bilateralFilter(image, 25, 100, 100)
     hsv_image = cv.cvtColor(plate_image, cv.COLOR_BGR2HSV)
     h_split, s_split, v_split = cv.split(hsv_image)  # 将H,S,V分量分别放到三个数组中
     rows, cols = h_split.shape
@@ -38,7 +33,8 @@ def locate():
     kernel = cv.getStructuringElement(cv.MORPH_RECT, (10, 3))
     morphology_image = cv.morphologyEx(binary_image, cv.MORPH_CLOSE, kernel)
 
-    contours, _ = cv.findContours(morphology_image, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_NONE)
+    contours, _ = cv.findContours(
+        morphology_image, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_NONE)
 
     verified_plates = []
     for i in np.arange(len(contours)):
@@ -47,10 +43,14 @@ def locate():
             output_image = util.unify_plate_image(output_image)
             verified_plates.append(output_image)
 
-
-    for i in np.arange(len(verified_plates)):
-        cv.imwrite(SAVE_PATH+'%s' % i+'.jpg', verified_plates[i])
+    return verified_plates
 
 
-if __name__ =="__main__":
-    locate()
+if __name__ == "__main__":
+    image = cv.imread("../input/img_3.png")
+
+    plates_image = locate(image)
+
+    for i in np.arange(len(plates_image)):
+        cv.imwrite('../character_segmentation/image/'+'%s' % i
+                   + '.jpg', plates_image[i])

@@ -7,24 +7,10 @@ IMAGE_WIDTH = 400
 IMAGE_PATH = "./image"
 SAVE_PATH = "./result/"
 
+
 class Segmentation():
     def __init__(self):
         pass
-
-    # 加载图像数据集和标签，其中标签是通过拆解中科大车牌数据集的图像名称得到的
-    def load(self, path, width, height):
-        input_data = []
-        # 导入指定路径下的所有图像数据
-        for item in os.listdir(path):
-            imgpath = os.path.join(path, item)
-            # filename = copy.copy(item)
-            if os.path.isdir(path):
-                input_image_ini = cv.imread(imgpath)
-                input_image = cv.resize(input_image_ini, (width, height))
-                input_data.append(input_image)
-
-        # 返回读取的图像数据集dataset和得到的对应图像的标签集label
-        return input_data
 
     # 数据探查，可以显示刚才导入的图像数据集
     def image_data_show(self, input_image):
@@ -58,7 +44,7 @@ class Segmentation():
 
     # 对二值化图像中的汉字进行高斯模糊，使其在字符分割时可以被看作一个整体
     def Blur(self, input_image):
-        hanzi_max_width = input_image.shape[1] // 8;  # 假设汉字最大宽度为整个车牌宽度的1/8
+        hanzi_max_width = input_image.shape[1] // 8  # 假设汉字最大宽度为整个车牌宽度的1/8
         hanzi_region = input_image[:, 0:hanzi_max_width]
         cv.GaussianBlur(hanzi_region, (9, 9), 0, dst=hanzi_region)
 
@@ -109,7 +95,8 @@ class Segmentation():
     def char_split(self, binary_input_image, offset_input_image):
         # 使用findContours函数，来识别车牌图像上的字符轮廓
         # 使用了RETR_EXTERNAL方法来检测字符轮廓，其只检测图形的外轮廓；使用了CHAIN_APPROX_SIMPLE的轮廓近似方法，只通过图形的边缘点来近似图形轮廓
-        char_contours, _ = cv.findContours(binary_input_image, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
+        char_contours, _ = cv.findContours(
+            binary_input_image, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
         # 设置车牌字符的大小范围
         min_width = binary_input_image.shape[1] // 40
         min_height = binary_input_image.shape[0] * 7 // 10
@@ -119,9 +106,11 @@ class Segmentation():
             x, y, w, h = cv.boundingRect(char_contours[i])
             # 按照上面得到的字符高度和宽度进行条件筛选
             if h >= min_height and w >= min_width:
-                valid_char_regions.append((x, offset_input_image[y:y + h, x:x + w]))
+                valid_char_regions.append(
+                    (x, offset_input_image[y:y + h, x:x + w]))
         # 将按照车牌上的x坐标从左到右排序
-        sorted_regions = sorted(valid_char_regions, key=lambda region: region[0])
+        sorted_regions = sorted(
+            valid_char_regions, key=lambda region: region[0])
 
         # 将上面分割得到的字符，放到一个list中返回
         candidate_char_images = []
@@ -133,7 +122,8 @@ class Segmentation():
     # 二值化图像显示函数，用于图像二值化后的数据探查
     def binary_show(self, input_data):
         for i in range((len(input_data))):
-            reshape_img = self.normal_shape(input_data[i], IMAGE_WIDTH, IMAGE_HEIGHT)
+            reshape_img = self.normal_shape(
+                input_data[i], IMAGE_WIDTH, IMAGE_HEIGHT)
             b_temp_img, off_temp_img = self.Binarization(reshape_img)
             self.Blur(b_temp_img)
             b_img = self.remove_border(b_temp_img)
@@ -155,7 +145,6 @@ class Segmentation():
             off_img = self.remove_border(off_temp_img)
             output_img.append(self.char_split(b_img, off_img))
         # output_img = np.array(output_img, dtype=np.uint8)
-
 
         return output_img
 
@@ -184,11 +173,18 @@ class Segmentation():
             j = -1
         print("保存完成！")
 
-    def segment(self):
+    def segment(self, plates_image):
         output = []  # 字符分割结果
-        self.dataset = self.load(IMAGE_PATH, IMAGE_WIDTH, IMAGE_HEIGHT)  # 加载图像数据集和标签集
-        output = self.character_segmentation(self.dataset)  # 进行字符拆分，并将字符拆分后得到的结果存储在output中
-        self.image_save(output)  # 将单个字符图像连同对应标签值保存
+
+        self.dataset = []
+        # 导入指定路径下的所有图像数据
+        for plate_image in plates_image:
+            input_image = cv.resize(plate_image, (IMAGE_WIDTH, IMAGE_HEIGHT))
+            self.dataset.append(input_image)
+
+        output = self.character_segmentation(
+            self.dataset)  # 进行字符拆分，并将字符拆分后得到的结果存储在output中
+        return output
 
 
 if __name__ == '__main__':
@@ -201,4 +197,5 @@ if __name__ == '__main__':
     # split.result_show(output)  # 显示分割得到的单个字符图像
     # split.image_save(output)  # 将单个字符图像连同对应标签值保存
     split = Segmentation()
-    split.segment()
+    splited_chars = split.segment()
+    split.image_save(splited_chars)
