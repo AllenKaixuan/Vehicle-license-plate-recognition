@@ -25,7 +25,7 @@ def recognize(image):
             output += predict.predict_en(chars_image[i][j])
         result += output
 
-    print('result:\n', result)
+    return result
 
 
 if __name__ == "__main__":
