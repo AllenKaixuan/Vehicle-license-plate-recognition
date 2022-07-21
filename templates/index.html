@@ -3,12 +3,8 @@
 <html>
 
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="UTF-8">
     <title>车牌识别</title>
-
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <meta name="viewport" content="width=1240">
-    <link rel="shortcut icon" src="webico.ico">
 </head>
 
 <body>
@@ -19,14 +15,31 @@
         <div class="bg">
             <img src="" />
         </div>
+
         <form action="http://127.0.0.1:8888/upload" method="post" enctype="multipart/form-data">
             <input type="file" id="file" name="upload_image" accept="image/gif, image/jpeg, image/png, image/jpg">
             <input type="submit" value="提交">
+            <!--
             <p>图片预览：</p>
             <img id="image-preview">
             <p>
+            -->
         </form>
+
+        <!--
+        <script>if {{ upload }}== ture</script>
+        -->
+        <div class="text">
+            <h2>上传的图片为</h2>
+            <div class="image" id="result">
+                <img src={{img_url}} width="500" height="400" />
+            </div>
+            <h2>识别的结果为</h2>
+            <li>{{plate}}</li>
+        </div>
     </div>
+
+
 </body>
 
 </html>

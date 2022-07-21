@@ -2,10 +2,7 @@ import os
 from unittest import result
 import cv2 as cv
 import numpy as np
-import numpy as np
-from plate_location import hsv_plate_locator
-from character_segmentation import segmentation
-from character_classification import predict
+from . import hsv_plate_locator, segmentation, predict
 
 IMAGE_PATH = "./input/"
 CHARACTER_PATH = "./output/character_output/"
