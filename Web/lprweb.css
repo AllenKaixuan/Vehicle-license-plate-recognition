@@ -1,0 +1,199 @@
+.lpr {
+    padding-top: 40px;
+    width: 1180px;
+    margin: 0 auto;
+}
+
+.lpr:last-child {
+    margin-bottom: 40px;
+}
+
+.lpr-header {
+    line-height: 46px;
+    font-size: 30px;
+    color: #000;
+    letter-spacing: 0;
+    text-align: center;
+}
+
+.lpr-cnt {
+    margin-top: 40px;
+    position: relative;
+    width: 100%;
+    height: 524px;
+}
+
+.lpr-canvas {
+    position: relative;
+    width: 840px;
+    height: 100%;
+    float: left;
+    background: #343434;
+}
+
+.image-input {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100px;
+    padding: 20px 10px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    z-index: 9;
+    background: rgba(0, 0, 0, .5);
+}
+
+.image-input .image-container {
+    position: relative;
+    width: 100%;
+    height: 38px;
+    font-size: 0;
+}
+
+.image-input .image-container .image-local,
+.image-input .image-container .image-url,
+.image-input .image-container .image-button {
+    display: inline-block;
+    vertical-align: middle;
+    height: 38px;
+    line-height: 36px;
+    color: #ccc;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    border: 1px solid #666;
+    outline: none;
+    background-color: rgba(0, 0, 0, .45);
+}
+
+.image-input .image-container .image-url {
+    width: 492px;
+    font-size: 14px;
+    line-height: 36px;
+    outline: none;
+    text-indent: 11px;
+    border-right: 0;
+}
+
+.image-input .image-container .image-button {
+    min-width: 116px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.image-input .image-container .image-text {
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0 30px;
+    font-size: 16px;
+    color: #ccc;
+    line-height: 38px;
+    background: transparent;
+    border: none;
+}
+
+.image-input .image-container .image-local {
+    width: 116px;
+    font-size: 16px;
+    line-height: 38px;
+    text-align: center;
+    color: #fff;
+    background-color: #0073eb;
+    border: none;
+    cursor: pointer;
+}
+
+.image-input .image-container .image-local-input {
+    width: 100%;
+    height: 100%;
+    display: none;
+}
+
+.image-input .image-notice {
+    margin-top: 10px;
+    color: #ccc;
+    font-size: 12px;
+}
+
+.canvas-centerlize {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    -webkit-transform-origin: center;
+    -moz-transform-origin: center;
+    -ms-transform-origin: center;
+    transform-origin: center;
+}
+
+.result {
+    float: left;
+    width: 340px;
+    height: 100%;
+    word-wrap: break-word;
+    word-break: break-all;
+    background-color: #fafafa;
+    overflow: hidden;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    padding-top: 50px;
+}
+
+.result-title {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    margin-top: -50px;
+    border-top: 1px solid #e1e1e1;
+    height: 50px;
+    line-height: 50px;
+    padding-left: 20px;
+    font-size: 16px;
+    position: relative;
+}
+
+.result-cnt {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    padding-left: 20px;
+    overflow-y: auto;
+    -webkit-transition: all .3s ease-in-out;
+    -moz-transition: all ease-in-out .3s;
+    transition: all .3s ease-in-out;
+    height: 0;
+    opacity: 0;
+}
+
+.result-item {
+    list-style: none;
+    padding: 0;
+    position: relative;
+    margin: 0 0 14px;
+    overflow: hidden;
+}
+
+.result-item-title {
+    color: #666;
+}
+
+.result-item-num {
+    display: inline-block;
+    vertical-align: top;
+    font-size: 14px;
+    line-height: 24px;
+    color: #333;
+    text-align: left;
+    width: 42px;
+}
+
+.result-item-text {
+    display: inline-block;
+    vertical-align: top;
+    font-size: 14px;
+    line-height: 24px;
+    color: #333;
+    text-align: left;
+}
