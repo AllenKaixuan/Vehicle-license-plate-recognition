@@ -4,7 +4,6 @@ import tensorflow.keras.layers as layers
 
 """
 implementation of the generator architecture defined in ESRGAN. 
-The upsampling factor is fixed to 8 for the purpose of this project
 """
 
 physical_devices = tf.config.list_physical_devices('GPU')
