@@ -47,10 +47,9 @@ def locate(image):
 
 
 if __name__ == "__main__":
-    image = cv.imread("../input/img_3.png")
+    image = cv.imread("./cars/car_example.jpg")
 
     plates_image = locate(image)
 
     for i in np.arange(len(plates_image)):
-        cv.imwrite('../character_segmentation/image/'+'%s' % i
-                   + '.jpg', plates_image[i])
+        cv.imwrite('./temp/'+'%s' % i + '.jpg', plates_image[i])

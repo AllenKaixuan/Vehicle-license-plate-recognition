@@ -19,7 +19,7 @@ def upload():
     if request.method=="GET":
         return render_template('lprweb.html',
                             img_url=url_for('static',filename='images/example.jpg'),
-                            plate=['jing', 'A', '8', '2', '8', '0', '6'],
+                            plate=['京A82806'],
                             )
     elif request.method=="POST":
         f = request.files.get('upload_image', None)
@@ -48,7 +48,7 @@ def upload():
 def scan_image(file_path):
     img = cv2.imread(file_path)
     # 识别结果
-    result = recognize(img)
-    return result
+    char_result,confidence_result = recognize(img)
+    return char_result
 
 sever.run(port=8888)

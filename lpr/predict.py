@@ -1,7 +1,7 @@
-import os
-import cv2 as cv
 import numpy as np
+import cv2 as cv
 import tensorflow as tf
+
 from tensorflow.keras import models
 
 
@@ -10,18 +10,25 @@ CH_IMAGE_HEIGHT = 48
 EN_IMAGE_WIDTH = 20
 EN_IMAGE_HEIGHT = 20
 
-CH_LABEL_DICT = {
-    'chuan': 0, 'e': 1, 'gan': 2, 'gan1': 3, 'gui': 4, 'gui1': 5, 'hei': 6, 'hu': 7, 'ji': 8, 'jin': 9,
-    'jing': 10, 'jl': 11, 'liao': 12, 'lu': 13, 'meng': 14, 'min': 15, 'ning': 16, 'qing': 17, 'qiong': 18, 'shan': 19,
-    'su': 20, 'sx': 21, 'wan': 22, 'xiang': 23, 'xin': 24, 'yu': 25, 'yu1': 26, 'yue': 27, 'yun': 28, 'zang': 29,
-    'zhe': 30
-}
-EN_LABEL_DICT = {
-    '0': 0, '1': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9,
-    'A': 10, 'B': 11, 'C': 12, 'D': 13, 'E': 14, 'F': 15, 'G': 16, 'H': 17, 'J': 18, 'K': 19,
-    'L': 20, 'M': 21, 'N': 22, 'P': 23, 'Q': 24, 'R': 25, 'S': 26, 'T': 27, 'U': 28, 'V': 29,
-    'W': 30, 'X': 31, 'Y': 32, 'Z': 33
-}
+CH_LABEL = [
+    "川", "鄂", "赣", "甘", "贵",
+    "桂", "黑", "沪", "冀", "津",
+    "京", "吉", "辽", "鲁", "蒙",
+    "闽", "宁", "青", "琼", "陕",
+    "苏", "晋", "皖", "湘", "新",
+    "豫", "渝", "粤", "云", "藏",
+    "浙",
+]
+EN_LABEL = [
+    '0', '1', '2', '3', '4',
+    '5', '6', '7', '8', '9',
+    'A', 'B', 'C', 'D', 'E',
+    'F', 'G', 'H', 'J', 'K',
+    'L', 'M', 'N', 'P', 'Q',
+    'R', 'S', 'T', 'U', 'V',
+    'W', 'X', 'Y', 'Z',
+]
+
 model_ch = models.load_model("models/model_ch.h5")
 model_en = models.load_model("models/model_en.h5")
 
@@ -35,9 +42,8 @@ def predict_ch(gray_image):
     prediction = model_ch.predict(image)
 
     prediction_index = np.argmax(prediction)
-    prediction_results = (
-        [k for k, v in CH_LABEL_DICT.items() if v == prediction_index])
-    return prediction_results
+    prediction_results = CH_LABEL[prediction_index]
+    return prediction_results, prediction[0][prediction_index]
 
 
 def predict_en(gray_image):
@@ -49,6 +55,5 @@ def predict_en(gray_image):
     prediction = model_en.predict(image)
 
     prediction_index = np.argmax(prediction)
-    prediction_results = (
-        [k for k, v in EN_LABEL_DICT.items() if v == prediction_index])
-    return prediction_results
+    prediction_results = EN_LABEL[prediction_index]
+    return prediction_results, prediction[0][prediction_index]

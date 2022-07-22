@@ -16,14 +16,14 @@
     <!--
     <style type="text/css">
         body {
-            background: url("background.jpg") no-repeat center center fixed;
+            background: url("{{ url_for('static',filename='images/background.jpg') }}") no-repeat center center fixed;
             /*兼容浏览器版本*/
             -webkit-background-size: cover;
             -o-background-size: cover;
             background-size: cover;
         }
     </style>
--->
+    -->
 </head>
 
 <body>
