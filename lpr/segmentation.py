@@ -116,7 +116,7 @@ class Segmentation():
                 #    (x, offset_input_image[y:y + h, x:x + w]))
                 #分割出来的字符常偏右上
                 valid_char_regions.append(
-                    (x, offset_input_image[max(int(y-h*0.2),0):y + h, x:min(int(x + w*1.15),binary_input_image.shape[1])]))
+                    (x, offset_input_image[max(int(y-h*0.2),0):y + h, x:min(int(x + w*1.1),binary_input_image.shape[1])]))
         # 将按照车牌上的x坐标从左到右排序
         sorted_regions = sorted(
             valid_char_regions, key=lambda region: region[0])

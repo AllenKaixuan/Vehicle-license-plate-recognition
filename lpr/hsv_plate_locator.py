@@ -9,8 +9,9 @@ MIN_SV = 95
 
 
 def locate(image):
+    plate_image=image
     # 平滑
-    plate_image = cv.bilateralFilter(image, 25, 100, 100)
+    #plate_image = cv.bilateralFilter(image, 25, 100, 100)
     hsv_image = cv.cvtColor(plate_image, cv.COLOR_BGR2HSV)
     h_split, s_split, v_split = cv.split(hsv_image)  # 将H,S,V分量分别放到三个数组中
     rows, cols = h_split.shape
@@ -30,7 +31,7 @@ def locate(image):
                 binary_image[row, col] = 255
 
     # 执行闭操作，使相邻区域连成一片
-    kernel = cv.getStructuringElement(cv.MORPH_RECT, (15, 3))
+    kernel = cv.getStructuringElement(cv.MORPH_RECT, (10, 3))
     morphology_image = cv.morphologyEx(binary_image, cv.MORPH_CLOSE, kernel)
 
     contours, _ = cv.findContours(
@@ -54,9 +55,9 @@ def locate(image):
 
 
 if __name__ == "__main__":
-    image = cv.imread("./cars/car_example.jpg")
+    image = cv.imread("./cars/plate6.jpg")
 
     plates_image = locate(image)
 
-    for i in np.arange(len(plates_image)):
-        cv.imwrite('./temp/'+'%s' % i + '.jpg', plates_image[i])
+    #for i in np.arange(len(plates_image)):
+    #    cv.imwrite('./temp/'+'%s' % i + '.jpg', plates_image[i])
