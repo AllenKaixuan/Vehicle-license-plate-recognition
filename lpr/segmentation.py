@@ -13,34 +13,37 @@ class Segmentation():
         pass
 
     # 数据探查，可以显示刚才导入的图像数据集
-    def image_data_show(self, input_image):
-        for img in input_image:
-            cv.imshow("image_show", img)
-            cv.waitKey()
-        cv.destroyAllWindows()
-
-    # 在进行车牌字符分割前，先对输入图像的尺寸进行调整
-    def normal_shape(self, input_image, width, height):
-        output_image = cv.resize(input_image, (width, height))
-        return output_image
+    def image_show(self, input_image, binarize: 'bool' = False):
+        if binarize:
+            for img in input_image:
+                reshape_img = cv.resize(img, (IMAGE_WIDTH, IMAGE_HEIGHT))
+                temp_img = self.Binarization(reshape_img)
+                b_temp_img = np.copy(temp_img)
+                self.Blur(b_temp_img)
+                b_img = self.remove_border(b_temp_img)
+                b_img = cv.resize(b_img, (300, 80))
+                cv.imshow("binary_image_show", b_img)
+                cv.waitKey()
+            cv.destroyAllWindows()
+        else:
+            for img in input_image:
+                cv.imshow("image_show", img)
+                cv.waitKey()
+            cv.destroyAllWindows()
 
     # 将输入的车牌图像进行灰度化和二值化操作
     def Binarization(self, input_image):
-        # 灰度化和二值化该区域
+        # 灰度化该区域
         grey_image_ini = cv.cvtColor(input_image, cv.COLOR_BGR2GRAY)
-        # grey_image = cv.GaussianBlur(grey_image_ini, (3, 3), 0)
-        # 使用双边滤波方法去除噪点
+        # 使用双边滤波方法去除噪点和二值化
         grey_image = cv.bilateralFilter(grey_image_ini, 11, 17, 17)
         ret, bin_img = cv.threshold(grey_image, 0, 255, cv.THRESH_OTSU)
-
         # 去除边框
-        offsetX = 3
-        offsetY = 5
+        offsetX = 2
+        offsetY = 3
         offset = bin_img[offsetY:-offsetY, offsetX:-offsetX]
-        working_region = np.copy(offset)
-        offset_region = np.copy(offset)
 
-        return working_region, offset_region
+        return offset
 
     # 对二值化图像中的汉字进行高斯模糊，使其在字符分割时可以被看作一个整体
     def Blur(self, input_image):
@@ -106,8 +109,14 @@ class Segmentation():
             x, y, w, h = cv.boundingRect(char_contours[i])
             # 按照上面得到的字符高度和宽度进行条件筛选
             if h >= min_height and w >= min_width:
+                if w < min_width*2:
+                    x -= w
+                    w *= 3
+                #valid_char_regions.append(
+                #    (x, offset_input_image[y:y + h, x:x + w]))
+                #分割出来的图片常偏右
                 valid_char_regions.append(
-                    (x, offset_input_image[y:y + h, x:x + w]))
+                    (x, offset_input_image[y:y + h, x:min(int(x + w*1.2),binary_input_image.shape[1])]))
         # 将按照车牌上的x坐标从左到右排序
         sorted_regions = sorted(
             valid_char_regions, key=lambda region: region[0])
@@ -119,83 +128,26 @@ class Segmentation():
 
         return candidate_char_images
 
-    # 二值化图像显示函数，用于图像二值化后的数据探查
-    def binary_show(self, input_data):
-        for i in range((len(input_data))):
-            reshape_img = self.normal_shape(
-                input_data[i], IMAGE_WIDTH, IMAGE_HEIGHT)
-            b_temp_img, off_temp_img = self.Binarization(reshape_img)
-            self.Blur(b_temp_img)
-            b_img = self.remove_border(b_temp_img)
-            b_img = cv.resize(b_img, (300, 80))
-            cv.imshow("binary_show", b_img)
-            cv.waitKey()
-        cv.destroyAllWindows()
-
-    # 字符分割函数，调用前面声明的几个方法，进行字符分割
-    def character_segmentation(self, input_data):
-        output_img = []
-
-        for i in range(len(input_data)):
+    def segment(self, plates_image):
+        output = []
+        # 导入指定路径下的所有图像数据
+        for img in plates_image:
+            reshape_img = cv.resize(img, (IMAGE_WIDTH, IMAGE_HEIGHT))
             # 依次调用几个方法，对车牌图像进行字符分割
-            reshape_img = self.normal_shape(input_data[i], 308, 83)
-            b_temp_img, off_temp_img = self.Binarization(reshape_img)
+            binary_img = self.Binarization(reshape_img)
+            b_temp_img = np.copy(binary_img)
+            off_temp_img = np.copy(binary_img)
+            # 膨胀化
+            kernel = cv.getStructuringElement(cv.MORPH_RECT, (3, 3))
+            b_temp_img = cv.dilate(b_temp_img[:,b_temp_img.shape[1] // 50:-b_temp_img.shape[1] // 50], kernel)
             self.Blur(b_temp_img)
             b_img = self.remove_border(b_temp_img)
             off_img = self.remove_border(off_temp_img)
-            output_img.append(self.char_split(b_img, off_img))
-        # output_img = np.array(output_img, dtype=np.uint8)
-
-        return output_img
-
-    # 字符分割结果展示，显示分割得到的所有单个字符图像
-    def result_show(self, candidate_chars):
-
-        for i in range(len(candidate_chars)):
-            for char in candidate_chars[i]:
-                image = cv.resize(char, (50, 50))
-
-    # 将所有得到的单个字符图像保存到result文件夹下，并在文件名中记录其标签值
-    def image_save(self, input_data):
-
-        tosaves = np.array(input_data)
-        count = np.arange(0, (tosaves.shape[0] + 1) * tosaves.shape[1], 1)
-        j = -1
-        for i in range(len(input_data)):
-            for tosave in tosaves[i]:
-                j = j + 1
-                # 将所有得到的单个字符图像统一调整为20*20大小
-                img = cv.resize(tosave, (20, 20))
-                # 将所有得到的图像全部保存在result目录下，统一保存为20*20大小的jpg格式文件
-                # 将所有得到的单个字符图像命名为：“00x_0y_label”的格式，其中的x为当前图像所对应的输入图像的编号，
-                # y为当前图像所显示字符在输入图像中的位置，label则对应了该图像的标签值
-                cv.imwrite(SAVE_PATH+str(count[j]) + '.jpg', img)
-            j = -1
-        print("保存完成！")
-
-    def segment(self, plates_image):
-        output = []  # 字符分割结果
-
-        self.dataset = []
-        # 导入指定路径下的所有图像数据
-        for plate_image in plates_image:
-            input_image = cv.resize(plate_image, (IMAGE_WIDTH, IMAGE_HEIGHT))
-            self.dataset.append(input_image)
-
-        output = self.character_segmentation(
-            self.dataset)  # 进行字符拆分，并将字符拆分后得到的结果存储在output中
+            output.append(self.char_split(b_img, off_img))
         return output
 
 
 if __name__ == '__main__':
-    # output = []  # 字符分割结果
-    # split = Segmentation()
-    # dataset = split.load(IMAGE_PATH, IMAGE_WIDTH, IMAGE_HEIGHT)  # 加载图像数据集和标签集
-    # split.image_data_show(dataset)  # 进行数据探查，显示加载的每张车牌图像
-    # split.binary_show(dataset)  # 显示二值化后的每张车牌图像
-    # output = split.character_segmentation(dataset)  # 进行字符拆分，并将字符拆分后得到的结果存储在output中
-    # split.result_show(output)  # 显示分割得到的单个字符图像
-    # split.image_save(output)  # 将单个字符图像连同对应标签值保存
     split = Segmentation()
     splited_chars = split.segment()
     split.image_save(splited_chars)

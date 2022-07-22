@@ -1,6 +1,6 @@
 import numpy as np
 import cv2 as cv
-from lpr import util
+import util
 
 HSV_MIN_BLUE_H = 100  # HSV中蓝色分量最小范围值
 HSV_MAX_BLUE_H = 140  # HSV中蓝色分量最大范围值
@@ -30,11 +30,11 @@ def locate(image):
                 binary_image[row, col] = 255
 
     # 执行闭操作，使相邻区域连成一片
-    kernel = cv.getStructuringElement(cv.MORPH_RECT, (10, 3))
+    kernel = cv.getStructuringElement(cv.MORPH_RECT, (15, 3))
     morphology_image = cv.morphologyEx(binary_image, cv.MORPH_CLOSE, kernel)
 
     contours, _ = cv.findContours(
-        morphology_image, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_NONE)
+        morphology_image, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
 
     verified_plates = []
     for i in np.arange(len(contours)):

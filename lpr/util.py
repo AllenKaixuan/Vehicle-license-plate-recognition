@@ -9,9 +9,9 @@ def verify_plate_sizes(contour):
     w = int(w)
     h = int(h)
     MIN_ASPECT_RATIO = 2.0		    # 车牌区域轮廓矩形的最小长宽比
-    MAX_ASPECT_RATIO = 4.0		    # 车牌区域轮廓矩形的最大长宽比
+    MAX_ASPECT_RATIO = 5.0		    # 车牌区域轮廓矩形的最大长宽比 /tried 4
     MIN_AREA = 34.0 * 8.0 * 10      # 车牌面积的最小值
-    MAX_AREA = 34.0 * 8.0 * 100     # 车牌面积的最大值
+    MAX_AREA = 34.0 * 8.0 * 110     # 车牌面积的最大值 /tried 34.0 * 8.0 * 100
 
     # 检查面积
     area = w * h
