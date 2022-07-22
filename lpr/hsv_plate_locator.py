@@ -39,8 +39,15 @@ def locate(image):
     verified_plates = []
     for i in np.arange(len(contours)):
         if util.verify_plate_sizes(contours[i]):
+            #x, y, w, h = cv.boundingRect(contours[i])
+            #cv.imshow("",plate_image[y:y+h, x:x+w])
+            #cv.waitKey()
             output_image = util.rotate_plate_image(contours[i], plate_image)
+            #cv.imshow("",output_image)
+            #cv.waitKey()
             output_image = util.unify_plate_image(output_image)
+            #cv.imshow("",output_image)
+            #cv.waitKey()
             verified_plates.append(output_image)
 
     return verified_plates

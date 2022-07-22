@@ -114,9 +114,9 @@ class Segmentation():
                     w *= 3
                 #valid_char_regions.append(
                 #    (x, offset_input_image[y:y + h, x:x + w]))
-                #分割出来的图片常偏右
+                #分割出来的字符常偏右上
                 valid_char_regions.append(
-                    (x, offset_input_image[y:y + h, x:min(int(x + w*1.2),binary_input_image.shape[1])]))
+                    (x, offset_input_image[max(int(y-h*0.2),0):y + h, x:min(int(x + w*1.15),binary_input_image.shape[1])]))
         # 将按照车牌上的x坐标从左到右排序
         sorted_regions = sorted(
             valid_char_regions, key=lambda region: region[0])
@@ -137,12 +137,14 @@ class Segmentation():
             binary_img = self.Binarization(reshape_img)
             b_temp_img = np.copy(binary_img)
             off_temp_img = np.copy(binary_img)
-            # 膨胀化
+            # 膨胀化, 模糊化
             kernel = cv.getStructuringElement(cv.MORPH_RECT, (3, 3))
-            b_temp_img = cv.dilate(b_temp_img[:,b_temp_img.shape[1] // 50:-b_temp_img.shape[1] // 50], kernel)
+            b_temp_img = cv.dilate(b_temp_img, kernel)
             self.Blur(b_temp_img)
+            # 去边框
             b_img = self.remove_border(b_temp_img)
             off_img = self.remove_border(off_temp_img)
+            # 字符分割
             output.append(self.char_split(b_img, off_img))
         return output
 
