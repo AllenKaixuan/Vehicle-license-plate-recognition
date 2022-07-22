@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans-CN">
+
+<head>
+    <title>车牌识别</title>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="keywords" content="车牌识别,车牌识别系统,车辆识别系统,车牌号识别">
+    <meta name="description" content="Python车牌识别系统">
+    <meta name="viewport" content="width=1240">
+
+    <link rel="shortcut icon" href="{{ url_for('static',filename='images/webico.ico') }}">
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/lprweb.css') }}">
+    <!--
+    <style type="text/css">
+        body {
+            background: url("background.jpg") no-repeat center center fixed;
+            /*兼容浏览器版本*/
+            -webkit-background-size: cover;
+            -o-background-size: cover;
+            background-size: cover;
+        }
+    </style>
+-->
+</head>
+
+<body>
+    <div class="lpr" linknav="true">
+        <div class="lpr-header">
+            Python车牌识别系统
+        </div>
+        <div class="lpr-cnt">
+            <!--图片输入-->
+            <div class="lpr-canvas">
+                <img id="image-preview" width="100%" height="100%" src="{{img_url}}">
+                <div class="image-input">
+                    <div class="image-container">
+                        <form action="http://127.0.0.1:8888/lprweb" method="post" enctype="multipart/form-data"
+                            id="file_upload" style="float:left">
+                            <label class="image-local">
+                                <input type="file" class="image-local-input" id="upload_image" name="upload_image"
+                                    accept="image/png, image/bmp, image/jpg, image/jpeg">
+                                本地上传
+                            </label>
+                        </form>
+                        <div class="image-text">图片类型支持PNG、BMP、JPG、JPEG。</div>
+                    </div>
+                </div>
+                <canvas class="canvas-centerlize" width="1680" height="1048"
+                    style="transform: translate(-50%, -50%) scale(0.5);">
+                </canvas>
+            </div>
+            <!--结果输出-->
+            <div class="result">
+                <div class="result-title">
+                    识别结果
+                </div>
+                <div class="result-cnt" style="height: 504px; opacity: 1;">
+                    <ul class="result-item">
+                        <div class="result-item-text">
+                            <div><span>{{plate}}</span></div>
+                        </div>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
+
+<script type="text/javascript">
+    let fileInput = document.getElementById('upload_image');
+    let preview = document.getElementById('image-preview');
+    // 监听change事件:
+    fileInput.addEventListener('change', function () {
+        if (!fileInput.value) {
+            info.innerHTML = '没有选择文件';
+            return;
+        }
+        let file = fileInput.files[0];
+        // 获取File信息:
+        if (!['image/jpeg', 'image/png', 'image/bmp', 'image/jpg'].includes(file.type)) {
+            alert('不是有效的图片文件!');
+            return;
+        }
+        // 读取文件:
+        let reader = new FileReader();
+        reader.onload = function (e) {
+            let data = e.target.result;
+            console.log(preview, 'a标签')
+            preview.src = data
+        };
+        // 以DataURL的形式读取文件:
+        reader.readAsDataURL(file);
+
+        document.getElementById("file_upload").submit();
+
+    });
+
+</script>

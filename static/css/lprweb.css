@@ -36,7 +36,7 @@
     left: 0;
     bottom: 0;
     width: 100%;
-    height: 100px;
+    height: 90px;
     padding: 20px 10px;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
@@ -48,17 +48,17 @@
 .image-input .image-container {
     position: relative;
     width: 100%;
-    height: 38px;
+    height: 46px;
     font-size: 0;
 }
 
-.image-input .image-container .image-local,
-.image-input .image-container .image-url,
-.image-input .image-container .image-button {
+.image-input .image-container .image-local {
     display: inline-block;
     vertical-align: middle;
-    height: 38px;
-    line-height: 36px;
+    width: 140px;
+    height: 46px;
+    font-size: 20px;
+    line-height: 46px;
     color: #ccc;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
@@ -66,38 +66,6 @@
     border: 1px solid #666;
     outline: none;
     background-color: rgba(0, 0, 0, .45);
-}
-
-.image-input .image-container .image-url {
-    width: 492px;
-    font-size: 14px;
-    line-height: 36px;
-    outline: none;
-    text-indent: 11px;
-    border-right: 0;
-}
-
-.image-input .image-container .image-button {
-    min-width: 116px;
-    font-size: 14px;
-    cursor: pointer;
-}
-
-.image-input .image-container .image-text {
-    display: inline-block;
-    vertical-align: middle;
-    margin: 0 30px;
-    font-size: 16px;
-    color: #ccc;
-    line-height: 38px;
-    background: transparent;
-    border: none;
-}
-
-.image-input .image-container .image-local {
-    width: 116px;
-    font-size: 16px;
-    line-height: 38px;
     text-align: center;
     color: #fff;
     background-color: #0073eb;
@@ -111,10 +79,16 @@
     display: none;
 }
 
-.image-input .image-notice {
-    margin-top: 10px;
+
+.image-input .image-container .image-text {
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0 30px;
+    font-size: 14px;
     color: #ccc;
-    font-size: 12px;
+    line-height: 46px;
+    background: transparent;
+    border: none;
 }
 
 .canvas-centerlize {
@@ -173,20 +147,6 @@
     position: relative;
     margin: 0 0 14px;
     overflow: hidden;
-}
-
-.result-item-title {
-    color: #666;
-}
-
-.result-item-num {
-    display: inline-block;
-    vertical-align: top;
-    font-size: 14px;
-    line-height: 24px;
-    color: #333;
-    text-align: left;
-    width: 42px;
 }
 
 .result-item-text {
