@@ -5,6 +5,7 @@ from lpr import predict,segmentation, hsv_plate_locator
 #import segmentation
 #import hsv_plate_locator
 
+
 def recognize(image):
     # locate
     plates_image = hsv_plate_locator.locate(image)
@@ -39,7 +40,7 @@ def recognize(image):
 
 
 if __name__ == "__main__":
-    image_path = './cars/plate3.jpg'
+    image_path = './cars/plate8.jpg'
     image = cv.imread(image_path)
     char_result, confidence_result = recognize(image)
     print(char_result)

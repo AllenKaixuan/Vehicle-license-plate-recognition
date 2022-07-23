@@ -47,7 +47,7 @@ class Segmentation():
 
     # 对二值化图像中的汉字进行高斯模糊，使其在字符分割时可以被看作一个整体
     def Blur(self, input_image):
-        hanzi_max_width = input_image.shape[1] // 8  # 假设汉字最大宽度为整个车牌宽度的1/8
+        hanzi_max_width = input_image.shape[1] // 9
         hanzi_region = input_image[:, 0:hanzi_max_width]
         cv.GaussianBlur(hanzi_region, (9, 9), 0, dst=hanzi_region)
 

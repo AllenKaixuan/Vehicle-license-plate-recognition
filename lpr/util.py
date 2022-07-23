@@ -35,6 +35,7 @@ def rotate_plate_image(contour, plate_image):
     # 获取该等值线框对应的外接正交矩形(长和宽分别与水平和竖直方向平行)
     x, y, w, h = cv.boundingRect(contour)
     top_most = tuple(contour[contour[:, :, 1].argmin()][0])
+    bottom_most = tuple(contour[contour[:, :, 1].argmax()][0])
     bounding_image = plate_image[y: y + h, x: x + w]
 
     # rect结构： (center (x,y), (width, height), angle of rotation)
@@ -66,7 +67,7 @@ def rotate_plate_image(contour, plate_image):
     # 计算旋转中心。此处直接使用放大图像的中点作为旋转中心
     new_center = (enlarged_width // 2, enlarged_height // 2)
     # 向左下/右上倾斜，多转半圈
-    if top_most[1]>(x+w)/2:
+    if top_most[0]>x+w/2 or bottom_most[0]<x+w/2:
         angle+=180.0
     # 获取执行旋转所需的变换矩阵
     transform_matrix = cv.getRotationMatrix2D(
