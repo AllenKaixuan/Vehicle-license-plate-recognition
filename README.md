@@ -25,7 +25,9 @@
   - 在Samples内放一张模糊的车牌图片
   - 运行generate.py，生成图片
 
-声明：GAN网络部分借鉴`License Plate Enhancement - From TV shows to reality`,
-[Github地址](git@github.com:zzxvictor/License-super-resolution.git)
+声明：GAN网络部分借鉴`License Plate Enhancement - From TV shows to reality`
+
+
+Github地址：git@github.com:zzxvictor/License-super-resolution.git
 
 
