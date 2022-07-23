@@ -1,6 +1,6 @@
 import numpy as np
 import cv2 as cv
-import util
+from lpr import util
 
 HSV_MIN_BLUE_H = 100  # HSV中蓝色分量最小范围值
 HSV_MAX_BLUE_H = 140  # HSV中蓝色分量最大范围值

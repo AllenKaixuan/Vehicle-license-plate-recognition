@@ -62,15 +62,6 @@ class Cnn(object):
                            metrics=['accuracy'],
                            )
 
-    # def load_data(self, train_images, train_labels, test_images, test_labels) -> None:
-    #     print('载入数据...')
-    #     # 归一化
-    #     self.train_images = train_images / 255.0
-    #     self.test_images = test_images / 255.0
-    #
-    #     self.train_labels = train_labels
-    #     self.test_labels = test_labels
-
     def load_data(self, dir_path):
         data = []
         labels = []

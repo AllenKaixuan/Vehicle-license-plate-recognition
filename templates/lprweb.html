@@ -59,9 +59,18 @@
                 </div>
                 <div class="result-cnt" style="height: 504px; opacity: 1;">
                     <ul class="result-item">
-                        <div class="result-item-text">
-                            <div><span>{{plate}}</span></div>
-                        </div>
+                        <li class="result-item-title">
+                            <span class="result-num">序号</span>
+                            <span class="result-text">内容</span>
+                        </li>
+                        {% for i in range(plates_num) %}
+                        <li class="result-item-text">
+                            <span class="result-num">{{i+1}}</span>
+                            <div class="result-text">
+                                <div><span>{{plates[i]}}</span></div>
+                            </div>
+                        </li>
+                        {% endfor %}
                     </ul>
                 </div>
             </div>

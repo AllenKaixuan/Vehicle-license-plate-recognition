@@ -40,7 +40,7 @@ class Segmentation():
         ret, bin_img = cv.threshold(grey_image, 0, 255, cv.THRESH_OTSU)
         # 去除边框
         offsetX = 2
-        offsetY = 3
+        offsetY = 1
         offset = bin_img[offsetY:-offsetY, offsetX:-offsetX]
 
         return offset

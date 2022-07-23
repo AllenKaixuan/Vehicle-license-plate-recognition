@@ -37,12 +37,6 @@ class Cnn(object):
         print('build model...')
         self.model = models.Sequential()
 
-        # self.model.add(tf.keras.layers.Flatten(input_shape=(IMAGE_HEIGHT, IMAGE_WIDTH, 1)))
-        # # reshape
-        #
-        # self.model.add(layers.Dense(128, activation=tf.nn.relu))
-        # self.model.add(layers.Dense(128, activation=tf.nn.relu))
-        # self.model.add(layers.Dense(CLASSIFICATION_COUNT, activation=tf.nn.softmax))
         self.model.add(layers.Conv2D(
             32, (3, 3),
             padding="valid",
@@ -51,8 +45,8 @@ class Cnn(object):
             input_shape=(IMAGE_HEIGHT, IMAGE_WIDTH, 1),
             activation="relu"
         ))
-        self.model.add(layers.MaxPooling2D(pool_size=(2, 2)))  # Pool layer, filter size is 2 * 2
-        self.model.add(layers.Dropout(0.2))  # Dropout layer
+        self.model.add(layers.MaxPooling2D(pool_size=(2, 2)))
+        self.model.add(layers.Dropout(0.2))
 
         self.model.add(layers.Conv2D(
             64, (3, 3), padding="valid",
@@ -64,14 +58,11 @@ class Cnn(object):
         self.model.add(layers.MaxPooling2D(pool_size=(2, 2)))
         self.model.add(layers.Dropout(0.2))
 
-        # The Flatten layer, between the convolutional layer and Dense,
-        # flattens the convolution output of the image into a one-dimensional vector.
         self.model.add(layers.Flatten())
-        # Fully connected layer, classic neural network structure, 1024 neurons
+        
         self.model.add(layers.Dense(1024, activation="relu"))
         self.model.add(layers.Dropout(0.4))
-        # Output layer, the number of neurons is the number of tag types,
-        # use sigmoid activation function, output the final result
+        
         self.model.add(layers.Dense(CLASSIFICATION_COUNT, activation="softmax"))
 
         self.model.summary()
@@ -80,15 +71,6 @@ class Cnn(object):
                            loss='categorical_crossentropy',
                            metrics=['accuracy'],
                            )
-
-    # def load_data(self, train_images, train_labels, test_images, test_labels) -> None:
-    #     print('载入数据...')
-    #     # 归一化
-    #     self.train_images = train_images / 255.0
-    #     self.test_images = test_images / 255.0
-    #
-    #     self.train_labels = train_labels
-    #     self.test_labels = test_labels
 
     def load_data(self, dir_path):
         data = []

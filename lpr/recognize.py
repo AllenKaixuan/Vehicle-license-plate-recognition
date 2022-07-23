@@ -1,9 +1,9 @@
 import cv2 as cv
 
-import predict
-import segmentation
-import hsv_plate_locator
-
+from lpr import predict,segmentation, hsv_plate_locator
+#import predict
+#import segmentation
+#import hsv_plate_locator
 
 def recognize(image):
     # locate
@@ -29,8 +29,8 @@ def recognize(image):
             char, confidence = predict.predict_en(chars_image[i][j])
             char_output += char
             confidence_output.append(confidence)
-            cv.imwrite("temp/plate"+str(i)+"_" +
-                       str(j)+".jpg", chars_image[i][j])
+            cv.imwrite("temp/plate"+str(i)+"_"+str(j)+".jpg",
+                       chars_image[i][j])
         if len(char_output) >= 4:
             char_result.append(''.join(char_output))
             confidence_result.append(confidence_output)
@@ -39,7 +39,7 @@ def recognize(image):
 
 
 if __name__ == "__main__":
-    image_path = './cars/plate5.jpg'
+    image_path = './cars/plate3.jpg'
     image = cv.imread(image_path)
     char_result, confidence_result = recognize(image)
     print(char_result)
