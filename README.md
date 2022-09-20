@@ -31,3 +31,7 @@
 Github地址：git@github.com:zzxvictor/License-super-resolution.git
 
 
+#### 环境配置
+python 3.8
+tensorflow 2.9
+配置环境见env.yml文件，运行`conda  create -n envname -f env.yml`（envname为环境名称）安装环境
